@@ -32,8 +32,9 @@ public class GameQueryServiceImplTest {
     private GameOfThreeQueryServiceImpl gameOfThreeQueryServiceImpl;
 
     @Test
-    public void testRetrieveWaitingGames() {
+    public void testRetrieveNotStartedGames() {
 
+        List<Game> gameList = new ArrayList<>();
         Player player = Player.builder().name("").playerStatus(PlayerStatus.CONNECTED).build();
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
@@ -41,9 +42,35 @@ public class GameQueryServiceImplTest {
         LocalDateTime now = LocalDateTime.now();
         Point point = Point.builder().arithmeticNumber(3).operator(ArithmeticOperator.DIVIDE).startedNumber(55)
                 .updatedNumber(55).build();
-        Game game = Game.builder().gameStatus(GameStatus.WAITING_FOR_PLAYER).playerList(playerList).creationTime(now)
+        Game game1 = Game.builder().gameStatus(GameStatus.ON_GOING).playerList(playerList).creationTime(now)
                 .point(point).build();
-        gameRepository.save(game);
+        Game game2 = Game.builder().gameStatus(GameStatus.NOT_STARTED).playerList(playerList).creationTime(now)
+                .point(point).build();
+        gameList.add(game1);
+        gameList.add(game2);       
+        Mockito.when(gameRepository.findAll()).thenReturn(gameList);
+        gameOfThreeQueryServiceImpl.retriveWaitingGames();
+
+    }
+    
+    @Test
+    public void testRetrieveWaitingGames() {
+
+        List<Game> gameList = new ArrayList<>();
+        Player player = Player.builder().name("").playerStatus(PlayerStatus.CONNECTED).build();
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(player);
+        assertNotNull(playerList);
+        LocalDateTime now = LocalDateTime.now();
+        Point point = Point.builder().arithmeticNumber(3).operator(ArithmeticOperator.DIVIDE).startedNumber(55)
+                .updatedNumber(55).build();
+        Game game1 = Game.builder().gameStatus(GameStatus.ON_GOING).playerList(playerList).creationTime(now)
+                .point(point).build();
+        Game game2 = Game.builder().gameStatus(GameStatus.WAITING_FOR_PLAYER).playerList(playerList).creationTime(now)
+                .point(point).build();
+        gameList.add(game1);
+        gameList.add(game2);       
+        Mockito.when(gameRepository.findAll()).thenReturn(gameList);
         gameOfThreeQueryServiceImpl.retriveWaitingGames();
 
     }

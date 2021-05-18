@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.takeaway.gameofthree.domain.entity.Game;
@@ -70,7 +71,7 @@ public class GameCommandServiceImplTest {
     @Test
     public void testUpdateTheGameStatusForOnePlayer() {
         GameMessage gameMessage = GameMessage.builder().from("f").fromId(5L).gameId(6L).gameStatus(GameStatus.ON_GOING)
-                .move(1).number(5).playerId(6L).playType(PlayType.AUTOMATIC_PLAY).build();
+                .move(1).number(5).playerId(6L).playType(PlayType.MANUAL_PLAY).build();
         Player player = Player.builder().name(PLAYER).playerStatus(PlayerStatus.CONNECTED).build();
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
@@ -86,7 +87,7 @@ public class GameCommandServiceImplTest {
     @Test
     public void testUpdateTheGameStatusForTwoPlayer() {
         GameMessage gameMessage = GameMessage.builder().from("f").fromId(5L).gameId(6L).gameStatus(GameStatus.ON_GOING)
-                .move(1).number(5).playerId(6L).playType(PlayType.AUTOMATIC_PLAY).build();
+                .move(1).number(5).playerId(6L).playType(PlayType.MANUAL_PLAY).build();
         Player player = Player.builder().name(PLAYER).playerStatus(PlayerStatus.CONNECTED).build();
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
@@ -104,7 +105,7 @@ public class GameCommandServiceImplTest {
     public void testUpdateTheValidGame() {
         ValidatedNumber.builder().move(1).number(55).status(ValidationStatus.VALID).build();
         GameMessage gameMessage = GameMessage.builder().from("f").fromId(5L).gameId(6L).gameStatus(GameStatus.ON_GOING)
-                .move(1).number(5).playerId(6L).playType(PlayType.AUTOMATIC_PLAY).build();
+                .move(1).number(5).playerId(6L).playType(PlayType.MANUAL_PLAY).build();
         Player player = Player.builder().name(PLAYER).playerStatus(PlayerStatus.CONNECTED).build();
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
@@ -122,7 +123,7 @@ public class GameCommandServiceImplTest {
     public void testUpdateNotValidGame() {
         ValidatedNumber.builder().move(1).number(55).status(ValidationStatus.NOT_VALID).build();
         GameMessage gameMessage = GameMessage.builder().from("f").fromId(5L).gameId(6L).gameStatus(GameStatus.ON_GOING)
-                .move(1).number(5).playerId(6L).playType(PlayType.AUTOMATIC_PLAY).build();
+                .move(2).number(5).playerId(6L).playType(PlayType.MANUAL_PLAY).build();
         Player player = Player.builder().name(PLAYER).playerStatus(PlayerStatus.CONNECTED).build();
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
@@ -131,8 +132,9 @@ public class GameCommandServiceImplTest {
         LocalDateTime now = LocalDateTime.now();
         Point point = Point.builder().arithmeticNumber(3).operator(ArithmeticOperator.DIVIDE).startedNumber(55)
                 .updatedNumber(55).build();
-        Game game = Game.builder().gameStatus(GameStatus.NOT_STARTED).playerList(playerList).creationTime(now)
+        Game game = Game.builder().gameStatus(GameStatus.ERROR).playerList(playerList).creationTime(now)
                 .point(point).build();
+        Mockito.when(gameRepository.save(Mockito.any())).thenReturn(game);
         gameOfThreeCommandService.updateTheGame(game, gameMessage);
     }
 

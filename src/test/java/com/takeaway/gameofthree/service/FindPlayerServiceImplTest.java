@@ -49,8 +49,14 @@ public class FindPlayerServiceImplTest {
     }
 
     @Test
-    public void findThePlaceOfSecondPlayer() {
+    public void findThePlaceOfSecondPlayer_FirstPlace() {
         Integer placeOfPlayer = 0;
+        findPlayerServiceImpl.findThePlaceOfSecondPlayer(placeOfPlayer);
+        assertTrue(true);
+    }
+    @Test
+    public void findThePlaceOfSecondPlayer_SecondPlace() {
+        Integer placeOfPlayer = 1;
         findPlayerServiceImpl.findThePlaceOfSecondPlayer(placeOfPlayer);
         assertTrue(true);
     }

@@ -11,7 +11,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.takeaway.gameofthree.domain.entity.Game;
 import com.takeaway.gameofthree.message.GameMessage;
@@ -46,7 +46,7 @@ public class GameOfThreeController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    @GetMapping(value = "/joinToTheGame", consumes = { MediaType.ALL_VALUE })
+    @PostMapping(value = "/joinToTheGame", consumes = { MediaType.ALL_VALUE })
     @ApiOperation(value = "", notes = "If there is no player create the game else join to the game.",
             nickname = "joinToTheGame")
     public ResponseEntity<Game> joinToTheGame() {

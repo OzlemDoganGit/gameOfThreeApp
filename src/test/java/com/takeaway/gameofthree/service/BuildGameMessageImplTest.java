@@ -116,7 +116,7 @@ public class BuildGameMessageImplTest {
     {
         GameMessage gameMessage = GameMessage.builder().from("f").fromId(1L).gameId(6L).gameStatus(GameStatus.ON_GOING)
                 .move(1).number(5).playerId(2L).playType(PlayType.MANUAL_PLAY).build();
-        Player player = Player.builder().name("d").playerStatus(PlayerStatus.CONNECTED).build();
+        Player player = Player.builder().name("d").playerStatus(PlayerStatus.CONNECTED).id(2L).build();
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
         playerList.add(player);

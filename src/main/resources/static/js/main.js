@@ -31,7 +31,7 @@ function connect(event) {
 
 	$.ajax({
 		url: '/joinToTheGame',
-		type: 'GET',
+		type: 'POST',
 		cache: false,
 		async: true,
 		success: function(request) {
@@ -271,6 +271,7 @@ function hideButtons() {
 	document.getElementById("manualPlayButton").style.display = "none";
 }
 
+
 function visibleComponents() {
 	document.getElementById("messageArea").style.display = "block";
 	document.getElementById('messageArea').style.visibility = 'visible';
@@ -279,19 +280,14 @@ function visibleComponents() {
 }
 
 function disconnect(event) {
-	if (stompClient) {
-		var disconnectMessage = {
-			playerId: playerId,
-			gameId: gameId,
-		};
-		stompClient.send("/app/game.disconnectGame", {}, JSON.stringify(disconnectMessage));
-	}
 
 	if (stompClient != null) {
 		stompClient.disconnect();
 	}
 	console.log("Disconnected");
-	event.preventDefault();
+	usernamePage.classList.remove('hidden');
+	gamePage.classList.add('hidden');
+
 }
 usernameForm.addEventListener('submit', connect, true)
 adjustAbleParams.addEventListener("change", setMoveValue, false);

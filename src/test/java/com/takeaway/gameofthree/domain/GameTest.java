@@ -10,10 +10,8 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.takeaway.gameofthree.GameOfThreeApplication;
 import com.takeaway.gameofthree.domain.entity.Game;
 import com.takeaway.gameofthree.domain.entity.Player;
 import com.takeaway.gameofthree.domain.entity.Point;
@@ -60,11 +58,29 @@ public class GameTest {
         game.setPlayerList(playerList);
         assertEquals(playerList, game.getPlayerList());
     }
-    
+
     @Test
-    public void testSetGameStatus()
-    {
+    public void testSetGameStatus() {
         game.setGameStatus(GameStatus.FINALIZED);
         assertEquals(GameStatus.FINALIZED, game.getGameStatus());
     }
+
+    @Test
+    public void testGetCreationTime() {
+        game.setCreationTime(LocalDateTime.now());
+        assertEquals(LocalDateTime.now(), game.getCreationTime());
+    }
+
+    @Test
+    public void testGetUpdateTime() {
+        game.setUpdateTime(LocalDateTime.now());
+        assertEquals(LocalDateTime.now(), game.getUpdateTime());
+    }
+
+    @Test
+    public void testGetId() {
+        game.setId(1L);
+        assertEquals(1L, game.getId());
+    }
+
 }
