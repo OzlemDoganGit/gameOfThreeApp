@@ -23,8 +23,9 @@
 * In each **restart** database will **drop and create**.
 * **Swagger** is used for **REST API** documentation  
 * **JUnit and Mockito** framework is used in writing and running your unit tests.
-* **Test Coverage : 95.8 %**
-* SonarQube analyze was done with SonarLint Eclipse plugin.
+* **Test Coverage : 95.5 %**
+* **SonarQube analyze** was done with SonarLint Eclipse plugin.
+* Spring DevTools was used during development.
 
 ### GitHub  
   The application can be downloaded to local repository by the following command after configuring SSH settings : 

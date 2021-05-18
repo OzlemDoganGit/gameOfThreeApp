@@ -11,6 +11,8 @@ var adjustAbleParams = document.getElementById("adjustAbleParams");
 var sendTheNumberForm = document.querySelector('#sendTheNumberForm');
 var disconnectForm = document.querySelector('#disconnectForm');
 var playerNameArea = document.querySelector('#playerNameArea');
+var playerNickNameArea = document.querySelector('#playerNickNameArea');
+var usernameForm = document.querySelector('#usernameForm');
 
 
 var stompClient = null;
@@ -22,6 +24,7 @@ var from = null;
 var to = null;
 var playerId = null;
 var playerName = null;
+var playerNickName = null;
 var toId = null;
 var gameCreationTime = null;
 var gameStatus = null;
@@ -29,40 +32,51 @@ var playerList = null;
 
 function connect(event) {
 
-	$.ajax({
-		url: '/joinToTheGame',
-		type: 'POST',
-		cache: false,
-		async: true,
-		success: function(request) {
-			console.log("gameId " + request.id)
-			gameCreationTime = request.creationTime;
-			gameId = request.id;
-			gameStatus = request.gameStatus;
-			playerList = request.playerList;
-			if (playerList.length === 1) {
-				playerId = request.playerList[0].id;
-				playerName = request.playerList[0].name;
+	playerNickName = document.querySelector('#name').value.trim();
+	var playerNickNameObj = new Object();
+	playerNickNameObj.playerNickName = playerNickName;
+
+	if (playerNickName) {
+
+
+		$.ajax({
+			url: '/joinToTheGame',
+			type: 'POST',
+			data: JSON.stringify(playerNickNameObj),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			cache: false,
+			async: true,
+			success: function(request) {
+				console.log("gameId " + request.id)
+				gameCreationTime = request.creationTime;
+				gameId = request.id;
+				gameStatus = request.gameStatus;
+				playerList = request.playerList;
+				if (playerList.length === 1) {
+					playerId = request.playerList[0].id;
+					playerNickName = request.playerList[0].name;
+				}
+				else {
+					playerId = request.playerList[1].id;
+					playerNickName = request.playerList[1].name;
+				}
+
 			}
-			else {
-				playerId = request.playerList[1].id;
-				playerName = request.playerList[1].name;
-			}
+		});
+		setTimeout(function() {
+			//connect to the websocket endpoint
+			var socket = new SockJS('/ws');
+			stompClient = Stomp.over(socket);
+			stompClient.connect({}, onConnected, onError);
 
-		}
-	});
-	setTimeout(function() {
-		//connect to the websocket endpoint
-		var socket = new SockJS('/ws');
-		stompClient = Stomp.over(socket);
-		stompClient.connect({}, onConnected, onError);
+		}, 500);
 
-	}, 700);
+		usernamePage.classList.add('hidden');
+		gamePage.classList.remove('hidden');
 
-	usernamePage.classList.add('hidden');
-	gamePage.classList.remove('hidden');
-
-	event.preventDefault();
+		event.preventDefault();
+	}
 }
 
 
@@ -139,7 +153,7 @@ function onMessageReceived(payload) {
 		hideComponents();
 		gameId = message.gameId;
 		gameStatus = message.gameStatus;
-		message.content = playerName + ' is waiting for a player!';
+		message.content = playerNickName + ' is waiting for a player!';
 		messageElement.classList.add('event-message');
 		alert("Waiting for a player");
 	}
@@ -147,12 +161,12 @@ function onMessageReceived(payload) {
 		hideButtons();
 		visibleComponents();
 
-		var messagePlayerName = document.createTextNode(playerName);
+		var messagePlayerNickName = document.createTextNode(playerNickName);
 		var textElement = document.createElement('p');
 		messageElement = document.createElement('li');
-		textElement.appendChild(messagePlayerName);
+		textElement.appendChild(messagePlayerNickName);
 		messageElement.appendChild(textElement);
-		playerNameArea.appendChild(messageElement);
+		playerNickNameArea.appendChild(messageElement);
 
 		gameId = message.gameId;
 		to = message.to;

@@ -25,6 +25,7 @@ import com.takeaway.gameofthree.GameOfThreeApplication;
 import com.takeaway.gameofthree.domain.entity.Game;
 import com.takeaway.gameofthree.domain.entity.Player;
 import com.takeaway.gameofthree.domain.entity.Point;
+import com.takeaway.gameofthree.dto.NickNameDTO;
 import com.takeaway.gameofthree.enums.ArithmeticOperator;
 import com.takeaway.gameofthree.enums.GameStatus;
 import com.takeaway.gameofthree.enums.PlayType;
@@ -73,11 +74,13 @@ public class GameOfThreeControllerTest {
 
     @Test
     public void testJoinToTheGame() {
+        NickNameDTO playerNickName = new NickNameDTO();
+        playerNickName.setPlayerNickName("OZLEM");
         List<Game> waitingGameList = gameOfThreeQueryService.retriveWaitingGames();
-        gameOfThreeCommandService.createOrJoinToTheGame(waitingGameList);
-        ResponseEntity<Game> actual = gameOfThreeController.joinToTheGame();
+        gameOfThreeCommandService.createOrJoinToTheGame(waitingGameList, playerNickName);
+        ResponseEntity<Game> actual = gameOfThreeController.joinToTheGame(playerNickName);
         Mockito.verify(gameOfThreeQueryService, Mockito.times(2)).retriveWaitingGames();
-        Mockito.verify(gameOfThreeCommandService, Mockito.times(2)).createOrJoinToTheGame(waitingGameList);
+        Mockito.verify(gameOfThreeCommandService, Mockito.times(2)).createOrJoinToTheGame(waitingGameList, playerNickName);
         Assert.assertNotNull(actual);
     }
 

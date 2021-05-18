@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.takeaway.gameofthree.domain.entity.Game;
 import com.takeaway.gameofthree.domain.entity.Player;
 import com.takeaway.gameofthree.domain.entity.Point;
+import com.takeaway.gameofthree.dto.NickNameDTO;
 import com.takeaway.gameofthree.enums.ArithmeticOperator;
 import com.takeaway.gameofthree.enums.GameStatus;
 import com.takeaway.gameofthree.enums.PlayType;
@@ -31,7 +32,6 @@ import com.takeaway.gameofthree.utils.ValidatedNumber;
 public class GameOfThreeCommandServiceImpl implements GameOfThreeCommandService {
 
     private static final Integer ONLY_ONE_PLAYER = Integer.valueOf(1);
-    private static final String PLAYER = "PLAYER-";
     private static final Integer END = Integer.valueOf(1);
     private static final Integer ARITHMETICCONSTANT = Integer.valueOf(3);
     private static final Integer ADDONE = Integer.valueOf(1);
@@ -49,8 +49,8 @@ public class GameOfThreeCommandServiceImpl implements GameOfThreeCommandService 
     @Qualifier("randomNumberGeneratorService")
     private NumberGeneratorService numberGeneratorService;
 
-    public Game createTheGame() {
-        Player player = updatePlayer();
+    public Game createTheGame(String playerNickName) {
+        Player player = updatePlayer(playerNickName);
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
         LocalDateTime now = LocalDateTime.now();
@@ -59,12 +59,12 @@ public class GameOfThreeCommandServiceImpl implements GameOfThreeCommandService 
         return gameRepository.save(game);
     }
 
-    private Player updatePlayer() {
-        String name = PLAYER.concat(String.valueOf(numberGeneratorService.generateRandomNumber()));
+    private Player updatePlayer(String playerNickName) {
+        String name = playerNickName;
         return Player.builder().name(name).playerStatus(PlayerStatus.CONNECTED).build();
     }
-    public Game addSecondPlayerToTheGame(Game game) {
-        Player player = updatePlayer();
+    public Game addSecondPlayerToTheGame(Game game, String playerNickName) {
+        Player player = updatePlayer(playerNickName);
         game.addPlayerList(player);
         game.setUpdateTime(LocalDateTime.now());
         game.setGameStatus(GameStatus.PAIRED);
@@ -195,13 +195,13 @@ public class GameOfThreeCommandServiceImpl implements GameOfThreeCommandService 
     }
 
     @Override
-    public Game createOrJoinToTheGame(List<Game> waitingGameList) {
+    public Game createOrJoinToTheGame(List<Game> waitingGameList, NickNameDTO playerNickName) {
         if (waitingGameList.isEmpty()) {
             // Mark the state as NOT_STARTED
-            return createTheGame();
+            return createTheGame(playerNickName.getPlayerNickName());
         } else {
             // Mark the state as PAIRED
-            return addSecondPlayerToTheGame(waitingGameList.get(0));
+            return addSecondPlayerToTheGame(waitingGameList.get(0), playerNickName.getPlayerNickName());
         }
     }
 

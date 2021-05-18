@@ -5,15 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.takeaway.gameofthree.GameOfThreeApplication;
 import com.takeaway.gameofthree.enums.GameStatus;
 import com.takeaway.gameofthree.enums.PlayType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = GameOfThreeApplication.class)
 public class GameMessageTest {
 
     @InjectMocks

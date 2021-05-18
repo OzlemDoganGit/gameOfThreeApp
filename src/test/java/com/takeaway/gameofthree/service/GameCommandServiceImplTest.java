@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.takeaway.gameofthree.domain.entity.Game;
 import com.takeaway.gameofthree.domain.entity.Player;
 import com.takeaway.gameofthree.domain.entity.Point;
+import com.takeaway.gameofthree.dto.NickNameDTO;
 import com.takeaway.gameofthree.enums.ArithmeticOperator;
 import com.takeaway.gameofthree.enums.GameStatus;
 import com.takeaway.gameofthree.enums.PlayType;
@@ -46,8 +47,10 @@ public class GameCommandServiceImplTest {
 
     @Test
     public void testJoinToTheGame() {
+        NickNameDTO playerNickName = new NickNameDTO();
+        playerNickName.setPlayerNickName("OZLEM");
         List<Game> gameList = new ArrayList<Game>();
-        Player player = Player.builder().name(PLAYER).playerStatus(PlayerStatus.CONNECTED).build();
+        Player player = Player.builder().name(playerNickName.getPlayerNickName()).playerStatus(PlayerStatus.CONNECTED).build();
         List<Player> playerList = new ArrayList<>();
         playerList.add(player);
         assertNotNull(playerList);
@@ -58,13 +61,15 @@ public class GameCommandServiceImplTest {
                 .point(point).build();
         gameList = new ArrayList<Game>();
         gameList.add(game);
-        gameOfThreeCommandService.createOrJoinToTheGame(gameList);
+        gameOfThreeCommandService.createOrJoinToTheGame(gameList, playerNickName);
     }
 
     @Test
     public void testCreateTheGame() {
         List<Game> gameList = new ArrayList<Game>();
-        gameOfThreeCommandService.createOrJoinToTheGame(gameList);
+        NickNameDTO playerNickName = new NickNameDTO();
+        playerNickName.setPlayerNickName("OZLEM");
+        gameOfThreeCommandService.createOrJoinToTheGame(gameList, playerNickName);
         assertTrue(true);
     }
 

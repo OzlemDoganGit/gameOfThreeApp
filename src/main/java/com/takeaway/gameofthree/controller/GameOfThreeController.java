@@ -12,8 +12,10 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.takeaway.gameofthree.domain.entity.Game;
+import com.takeaway.gameofthree.dto.NickNameDTO;
 import com.takeaway.gameofthree.message.GameMessage;
 import com.takeaway.gameofthree.service.BuildGameMessageService;
 import com.takeaway.gameofthree.service.FindPlayerPlaceService;
@@ -46,12 +48,12 @@ public class GameOfThreeController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping(value = "/joinToTheGame", consumes = { MediaType.ALL_VALUE })
+    @PostMapping(value = "/joinToTheGame", consumes = { MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "", notes = "If there is no player create the game else join to the game.",
             nickname = "joinToTheGame")
-    public ResponseEntity<Game> joinToTheGame() {
+    public ResponseEntity<Game> joinToTheGame(@RequestBody NickNameDTO playerNickName) {
         List<Game> waitingGameList = gameOfThreeQueryService.retriveWaitingGames();
-        Game game = gameOfThreeCommandService.createOrJoinToTheGame(waitingGameList);
+        Game game = gameOfThreeCommandService.createOrJoinToTheGame(waitingGameList, playerNickName);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
