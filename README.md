@@ -71,6 +71,9 @@ spring.h2.console.settings.web-allow-others=false
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.hbm2ddl.auto=create-drop
 ```
+
+**Note: Snapshots of the application were added to the image folder. **
+
 ###Snapshots
 ####Connect Page
 ![Screen 1](image/connectPage.jpg)
