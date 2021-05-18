@@ -71,3 +71,24 @@ spring.h2.console.settings.web-allow-others=false
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.hbm2ddl.auto=create-drop
 ```
+###Snapshots
+####Connect Page
+![Screen 1](image/connectPage.jpg)
+####Choose Game Type
+![Screen 2](image/chooseGameType.jpg)
+####Auto Game Starting Player Page
+![Screen 3](image/autoGameStartingPlayerPage.jpg)
+####Auto Game Second Player Page
+![Screen 4](image/autoGameStartingPlayerPage.jpg)
+####Manual Game Starting Player Page
+![Screen 5](image/ManualGameStartingPage.jpg)
+####Manual Game Second Player Page
+![Screen 6](image/manualGameSecondPlayerPage.jpg)
+####Manual Game Error in Adjustment
+![Screen 7](image/ErrorInAdjustmentManualGame.jpg)
+####Manual Game Sent Number To The Opponent Player
+![Screen 8](image/sentNumberToTheOpponentPlayer.jpg)
+####Manual Game is ongoing
+![Screen 9](image/manualOnGoingGame.jpg)
+####Manual Game is finalized
+![Screen 10](image/FinalizedManualGame.jpg)
