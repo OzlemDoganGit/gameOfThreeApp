@@ -11,8 +11,8 @@ import lombok.Setter;
 @Builder
 public class ValidatedNumber {
 
-	ValidationStatus status;
-	Integer number;
-	Integer move;
+    ValidationStatus status;
+    Integer number;
+    Integer move;
 
 }

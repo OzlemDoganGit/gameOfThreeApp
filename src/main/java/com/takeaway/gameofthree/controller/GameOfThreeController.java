@@ -1,6 +1,5 @@
 package com.takeaway.gameofthree.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,142 +14,89 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.takeaway.gameofthree.domain.entity.Game;
-import com.takeaway.gameofthree.domain.entity.Player;
-import com.takeaway.gameofthree.domain.entity.Point;
-import com.takeaway.gameofthree.enums.GameStatus;
 import com.takeaway.gameofthree.message.GameMessage;
+import com.takeaway.gameofthree.service.BuildGameMessageService;
+import com.takeaway.gameofthree.service.FindPlayerPlaceService;
 import com.takeaway.gameofthree.service.GameOfThreeCommandService;
 import com.takeaway.gameofthree.service.GameOfThreeQueryService;
+import com.takeaway.gameofthree.service.PrepareAutoMessageService;
 
 import io.swagger.annotations.ApiOperation;
 
 @Controller
 public class GameOfThreeController {
 
-	private static final String TOPICPREFIX = "/topic/gameOfThree/";
-	private static final Integer END = Integer.valueOf(1);
+    private static final String TOPICPREFIX = "/topic/gameOfThree/";
 
-	@Autowired
-	private GameOfThreeCommandService gameOfThreeCommandService;
+    @Autowired
+    private GameOfThreeCommandService gameOfThreeCommandService;
 
-	@Autowired
-	private GameOfThreeQueryService gameOfThreeQueryService;
+    @Autowired
+    private GameOfThreeQueryService gameOfThreeQueryService;
 
-	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private FindPlayerPlaceService findPlayerService;
 
-	@GetMapping(value = "/joinToTheGame", consumes = { MediaType.ALL_VALUE })
-	@ApiOperation(value = "", notes = "If there is no player create the game else join to the game.", nickname = "joinToTheGame")
-	public ResponseEntity<Game> joinToTheGame() {
-		Game game = setTheGame();
-		return new ResponseEntity<>(game, HttpStatus.OK);
-	}
+    @Autowired
+    private BuildGameMessageService buildGameMessageService;
 
-	private Game setTheGame() {
-		List<Game> waitingGameList = gameOfThreeQueryService.retriveWaitingGames();
-		Game game = new Game();
-		if (waitingGameList.isEmpty()) {
-			// Mark the state as NOT_STARTED
-			game = gameOfThreeCommandService.createTheGame();
-		} else {
-			// Mark the state as PAIRED
-			game = gameOfThreeCommandService.addSecondPlayerToTheGame(waitingGameList.get(0));
-		}
-		return game;
-	}
+    @Autowired
+    private PrepareAutoMessageService prepareAutoMessageService;
 
-	@MessageMapping("/game.manualPlayGame")
-	public void playGame(@Payload GameMessage gameMessage) {
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
-		Optional<Game> game = gameOfThreeQueryService.retrieveTheGameById(gameMessage.getGameId());
-		game.ifPresent(gameVal -> {
-			Game updatedGame = gameOfThreeCommandService.updateTheGameStatus(gameVal, gameMessage);
-			sendGameMessage(updatedGame, gameMessage);
-		});
-	}
+    @GetMapping(value = "/joinToTheGame", consumes = { MediaType.ALL_VALUE })
+    @ApiOperation(value = "", notes = "If there is no player create the game else join to the game.",
+            nickname = "joinToTheGame")
+    public ResponseEntity<Game> joinToTheGame() {
+        List<Game> waitingGameList = gameOfThreeQueryService.retriveWaitingGames();
+        Game game = gameOfThreeCommandService.createOrJoinToTheGame(waitingGameList);
+        return new ResponseEntity<>(game, HttpStatus.OK);
+    }
 
-	@MessageMapping("/game.calculateNumber")
-	public void calculateNumber(@Payload GameMessage gameMessage) {
+    @MessageMapping("/game.manualPlayGame")
+    public void manualPlayGame(@Payload GameMessage gameMessage) {
 
-		Optional<Game> game = gameOfThreeQueryService.retrieveTheGameById(gameMessage.getGameId());
-		game.ifPresent(gameVal -> {
-			Game updatedGame = gameOfThreeCommandService.updateTheGame(gameVal, gameMessage);
-			sendGameMessage(updatedGame, gameMessage);
-		});
-	}
+        Optional<Game> game = gameOfThreeQueryService.retrieveTheGameById(gameMessage.getGameId());
+        game.ifPresent(gameVal -> {
+            Game updatedGame = gameOfThreeCommandService.updateTheGameStatus(gameVal, gameMessage);
+            GameMessage updatedGameMessage = buildGameMessageService.buildManualGameMessage(updatedGame, gameMessage);
+            messagingTemplate.convertAndSend(TOPICPREFIX.concat(String.valueOf(updatedGame.getId())),
+                    updatedGameMessage);
+        });
+    }
 
-	@MessageMapping("/game.autoPlayGame")
-	public void autoPlayGame(@Payload GameMessage gameMessage) {
+    @MessageMapping("/game.calculateNumber")
+    public void calculateNumber(@Payload GameMessage gameMessage) {
 
-		Optional<Game> game = gameOfThreeQueryService.retrieveTheGameById(gameMessage.getGameId());
+        Optional<Game> game = gameOfThreeQueryService.retrieveTheGameById(gameMessage.getGameId());
+        game.ifPresent(gameVal -> {
+            Game updatedGame = gameOfThreeCommandService.updateTheGame(gameVal, gameMessage);
+            GameMessage updatedGameMessage = buildGameMessageService.buildManualGameMessage(updatedGame, gameMessage);
+            messagingTemplate.convertAndSend(TOPICPREFIX.concat(String.valueOf(updatedGame.getId())),
+                    updatedGameMessage);
+        });
+    }
 
-		game.ifPresent(gameVal -> {
-			List<Game> autoGameResultList = new ArrayList<Game>();
-			Integer placeOfPlayer = findThePlaceOfStartingPlayer(gameVal, gameMessage);
-			Integer nextPlayerPlace = findThePlaceOfSecondPlayer(placeOfPlayer);
-			Game statusUpdatedGame = gameOfThreeCommandService.updateStatusOfAutoGame(gameVal, placeOfPlayer);
-			autoGameResultList.add(statusUpdatedGame);
+    @MessageMapping("/game.autoPlayGame")
+    public void autoPlayGame(@Payload GameMessage gameMessage) {
 
-			if (gameVal.getGameStatus() != GameStatus.WAITING_FOR_PLAYER) {
-				Point point = gameVal.getPoint();
-				while (point.getUpdatedNumber() != END) {
-					Game updatedGame = gameOfThreeCommandService.updateGamePoint(point, gameVal);
-					point = updatedGame.getPoint();
-					autoGameResultList.add(updatedGame);
-				}
-				for (Game autoGameResult : autoGameResultList) {
-					GameMessage sentGameMessage = autoGameResult.getGameStatus().buildAutoGameMessage(autoGameResult,
-							placeOfPlayer, nextPlayerPlace);
-					messagingTemplate.convertAndSend(TOPICPREFIX.concat(String.valueOf(autoGameResult.getId())),
-							sentGameMessage);
-					Integer startingPlayerIndexTemp = nextPlayerPlace;
-					nextPlayerPlace = updateNextPlayerPlace(placeOfPlayer, nextPlayerPlace);
-					placeOfPlayer = updateStartingPlayerPlace(placeOfPlayer, startingPlayerIndexTemp);
-				}
-			} else {
-				GameMessage sentGameMessage = gameVal.getGameStatus().buildAutoGameMessage(gameVal, placeOfPlayer,
-						nextPlayerPlace);
-				messagingTemplate.convertAndSend(TOPICPREFIX.concat(String.valueOf(gameVal.getId())), sentGameMessage);
-
-			}
-		});
-	}
-
-	private Integer updateStartingPlayerPlace(Integer placeOfPlayer, Integer startingPlayerIndexTemp) {
-		placeOfPlayer = startingPlayerIndexTemp;
-		return placeOfPlayer;
-	}
-
-	private Integer updateNextPlayerPlace(Integer placeOfPlayer, Integer nextPlayerPlace) {
-		nextPlayerPlace = placeOfPlayer;
-		return nextPlayerPlace;
-	}
-
-	private void sendGameMessage(Game game, GameMessage gameMessage) {
-		gameMessage = game.getGameStatus().buildManualGameMessage(game, gameMessage);
-		messagingTemplate.convertAndSend(TOPICPREFIX.concat(String.valueOf(game.getId())),gameMessage);
-	}
-
-	private Integer findThePlaceOfStartingPlayer(Game game, GameMessage gameMessage) {
-		List<Player> playerList = game.getPlayerList();
-		Integer placeOfIndex = Integer.valueOf(0);
-		for (Player player : playerList) {
-			if (gameMessage.getPlayerId().equals(player.getId())) {
-				placeOfIndex = playerList.indexOf(player);
-			}
-		}
-		return placeOfIndex;
-	}
-
-	private Integer findThePlaceOfSecondPlayer(Integer placeOfPlayer) {
-
-		Integer nextPlayerIndex = Integer.valueOf(0);
-		if (placeOfPlayer.equals(Integer.valueOf(0))) {
-			nextPlayerIndex = Integer.valueOf(1);
-		} else {
-			nextPlayerIndex = Integer.valueOf(0);
-		}
-		return nextPlayerIndex;
-	}
+        Optional<Game> game = gameOfThreeQueryService.retrieveTheGameById(gameMessage.getGameId());
+        game.ifPresent(gameVal -> {
+            List<GameMessage> gameMessageList = prepareAutoMessageService.prepareAutoMessages(gameVal, gameMessage);
+            for (GameMessage sentGameMessage : gameMessageList) {
+                messagingTemplate.convertAndSend(TOPICPREFIX.concat(String.valueOf(gameMessage.getGameId())),
+                        sentGameMessage);
+            }
+            if (gameMessageList.isEmpty()) {
+                Integer placeOfPlayer = findPlayerService.findThePlaceOfStartingPlayer(gameVal, gameMessage);
+                Integer nextPlayerPlace = findPlayerService.findThePlaceOfSecondPlayer(placeOfPlayer);
+                GameMessage sentGameMessage = buildGameMessageService.buildAutoGameMessage(gameVal, placeOfPlayer,
+                        nextPlayerPlace);
+                messagingTemplate.convertAndSend(TOPICPREFIX.concat(String.valueOf(gameVal.getId())), sentGameMessage);
+            }
+        });
+    }
 
 }

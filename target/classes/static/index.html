@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 <meta name="viewport"
@@ -19,13 +19,23 @@
 <div id="title">
 	<div class="title-container">
 		<h2 class="title">Game Of Three</h2>
-		<h3 id="playerNameArea">
-		</h3>
+		<h3 id="playerNameArea"></h3>
 	</div>
 </div>
 
+<div id="username-page">
+	<div class="username-page-container">
+		<form id="usernameForm" name="usernameForm">
+		<br></br>
+			<div class="form-group">
+				<button type="submit" class="accent username-submit">Connect
+					to the Game</button>
+			</div>
+		</form>
+	</div>
+</div>
 
-<div id="game-page">
+<div id="game-page" class="hidden">
 	<div class="game-container">
 
 		<div class="game-header">
@@ -51,11 +61,12 @@
 		<form id="adjustAbleParamForm" name="adjustAbleParamForm">
 			<select name="adjustAbleParams" id="adjustAbleParams"
 				class="adjustAbleParams">
-				<optgroup label="Choose">
-					<option value="-1" selected="selected">-1</option>
-					<option value="0">0</option>
-					<option value="1">1</option>
-				</optgroup>
+
+				<option selected="selected" value="">- Select an option -</option>
+				<option value="-1">-1</option>
+				<option value="0">0</option>
+				<option value="1">1</option>
+
 			</select>
 		</form>
 

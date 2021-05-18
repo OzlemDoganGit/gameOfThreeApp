@@ -28,38 +28,37 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@Where(clause = "game_status = 1 or game_status = 0 or game_status = 2")
 public class Game {
 
-	@Id
-	@GeneratedValue
-	private long id;
+    @Id
+    @GeneratedValue
+    private long id;
 
-	@Column(columnDefinition = "TIMESTAMP", updatable = false, nullable = true)
-	LocalDateTime creationTime;
+    @Column(columnDefinition = "TIMESTAMP", updatable = false, nullable = true)
+    LocalDateTime creationTime;
 
-	@Column(columnDefinition = "TIMESTAMP", updatable = true, nullable = true)
-	LocalDateTime updateTime;
+    @Column(columnDefinition = "TIMESTAMP", updatable = true, nullable = true)
+    LocalDateTime updateTime;
 
-	@Column(nullable = true)
-	GameStatus gameStatus;
-	
-	@Column(nullable = true)
-	PlayType playType;
+    @Column(nullable = true)
+    GameStatus gameStatus;
 
-	@Column(nullable = true)
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "game_id")
-	List<Player> playerList;
-	
+    @Column(nullable = true)
+    PlayType playType;
+
+    @Column(nullable = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "game_id")
+    List<Player> playerList;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "point_id", referencedColumnName = "id")
-	Point point;
+    Point point;
 
-	public void addPlayerList(Player player) {
-		List<Player> playerList = this.getPlayerList();
-		playerList.add(player);
-		this.setPlayerList(playerList);
-	}
+    public void addPlayerList(Player player) {
+        List<Player> existingPlayerList = this.getPlayerList();
+        this.getPlayerList().add(player);
+        this.setPlayerList(existingPlayerList);
+    }
 
 }

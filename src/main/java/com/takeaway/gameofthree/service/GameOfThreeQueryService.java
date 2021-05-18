@@ -7,7 +7,8 @@ import com.takeaway.gameofthree.domain.entity.Game;
 
 public interface GameOfThreeQueryService {
 
-	public List<Game> retriveWaitingGames();
-	public Optional<Game> retrieveTheGameById(Long gameId);
+    public List<Game> retriveWaitingGames();
+
+    public Optional<Game> retrieveTheGameById(Long gameId);
 
 }

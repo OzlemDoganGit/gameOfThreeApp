@@ -21,23 +21,23 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Point {
 
-	@Id
-	@GeneratedValue
-	private int id;
+    @Id
+    @GeneratedValue
+    private int id;
 
-	@Column(nullable = true)
-	Integer startedNumber;
+    @Column(nullable = true)
+    Integer startedNumber;
 
-	@Column(nullable = true)
-	Integer updatedNumber;
+    @Column(nullable = true)
+    Integer updatedNumber;
 
-	@Column(nullable = true)
-	ArithmeticOperator operator;
+    @Column(nullable = true)
+    ArithmeticOperator operator;
 
-	@Column(nullable = true)
-	Integer adjustedNumber;
+    @Column(nullable = true)
+    Integer adjustedNumber;
 
-	@Column(nullable = true)
-	Integer arithmeticNumber;
+    @Column(nullable = true)
+    Integer arithmeticNumber;
 
 }

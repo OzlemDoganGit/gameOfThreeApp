@@ -2,12 +2,8 @@ package com.takeaway.gameofthree.enums;
 
 public enum ValidationStatus {
 
-	VALID() {
+    VALID() {},
 
-	},
-
-	NOT_VALID() {
-
-	};
+    NOT_VALID() {};
 
 }

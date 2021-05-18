@@ -17,18 +17,18 @@ import com.takeaway.gameofthree.service.GameOfThreeQueryService;
 @Transactional(readOnly = true)
 public class GameOfThreeQueryServiceImpl implements GameOfThreeQueryService {
 
-	@Autowired
-	private GameRepository gameRepository;
-	
-	@Override
-	public List<Game> retriveWaitingGames() {
-		return gameRepository.findAll().stream().filter(e -> (e.getGameStatus().equals(GameStatus.NOT_STARTED)
-				|| e.getGameStatus().equals(GameStatus.WAITING_FOR_PLAYER))).collect(Collectors.toList());
-	}
+    @Autowired
+    private GameRepository gameRepository;
 
-	@Override
-	public Optional<Game> retrieveTheGameById(Long gameId) {
-		return gameRepository.findById(gameId);
-	}
+    @Override
+    public List<Game> retriveWaitingGames() {
+        return gameRepository.findAll().stream().filter(e -> (e.getGameStatus().equals(GameStatus.NOT_STARTED)
+                || e.getGameStatus().equals(GameStatus.WAITING_FOR_PLAYER))).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Game> retrieveTheGameById(Long gameId) {
+        return gameRepository.findById(gameId);
+    }
 
 }

@@ -1,4 +1,4 @@
-
+var usernamePage = document.querySelector('#username-page');
 var gamePage = document.querySelector('#game-page');
 var manualPlayButton = document.querySelector('#manualPlayButton');
 var automaticPlayButton = document.querySelector('#automaticPlayButton');
@@ -24,39 +24,46 @@ var playerId = null;
 var playerName = null;
 var toId = null;
 var gameCreationTime = null;
+var gameStatus = null;
+var playerList = null;
 
+function connect(event) {
 
-$.ajax({
-	url: '/joinToTheGame',
-	type: 'GET',
-	cache: false,
-	async: true,
-	success: function(request) {
-		console.log("gameId " + request.id)
-		gameCreationTime = request.creationTime;
-		gameId = request.id;
-		gameStatus = request.gameStatus;
-		playerList = request.playerList;
-		if (playerList.length === 1) {
-			playerId = request.playerList[0].id;
-			playerName = request.playerList[0].name;
+	$.ajax({
+		url: '/joinToTheGame',
+		type: 'GET',
+		cache: false,
+		async: true,
+		success: function(request) {
+			console.log("gameId " + request.id)
+			gameCreationTime = request.creationTime;
+			gameId = request.id;
+			gameStatus = request.gameStatus;
+			playerList = request.playerList;
+			if (playerList.length === 1) {
+				playerId = request.playerList[0].id;
+				playerName = request.playerList[0].name;
+			}
+			else {
+				playerId = request.playerList[1].id;
+				playerName = request.playerList[1].name;
+			}
+
 		}
-		else {
-			playerId = request.playerList[1].id;
-			playerName = request.playerList[1].name;
-		}
+	});
+	setTimeout(function() {
+		//connect to the websocket endpoint
+		var socket = new SockJS('/ws');
+		stompClient = Stomp.over(socket);
+		stompClient.connect({}, onConnected, onError);
 
-	}
-});
-setTimeout(function() {
-	//connect to the websocket endpoint
-	var socket = new SockJS('/ws');
-	stompClient = Stomp.over(socket);
-	stompClient.connect({}, onConnected, onError);
+	}, 700);
 
-}, 700);
+	usernamePage.classList.add('hidden');
+	gamePage.classList.remove('hidden');
 
-
+	event.preventDefault();
+}
 
 
 function onConnected() {
@@ -123,8 +130,6 @@ function sendTheNumber(event) {
 	event.preventDefault();
 }
 
-
-
 function onMessageReceived(payload) {
 
 	var message = JSON.parse(payload.body);
@@ -138,45 +143,13 @@ function onMessageReceived(payload) {
 		messageElement.classList.add('event-message');
 		alert("Waiting for a player");
 	}
-	else if (message.gameStatus === 'READY') {
-		hideButtons();
-		visibleComponents();
-
-		var messagePlayerName = document.createTextNode(playerName);
-		var textElement = document.createElement('p');
-		var messageElement = document.createElement('li');
-		textElement.appendChild(messagePlayerName);
-		messageElement.appendChild(textElement);
-		playerNameArea.appendChild(messageElement);
-		gameId = message.gameId;
-		to = message.to;
-		number = message.number;
-		playType = message.playType;
-		gameStatus = message.gameStatus;
-		from = message.from;
-		message.content = number + ' is sent to ' + to;
-
-		//check that manual or automatic
-		if (playType === "MANUAL_PLAY") {
-			document.getElementById("adjustAbleParamForm").style.display = "block";
-			document.getElementById('adjustAbleParamForm').style.visibility = 'visible';
-		}
-		else {
-			document.getElementById("adjustAbleParamForm").style.display = "none";
-			document.getElementById('adjustAbleParamForm').style.visibility = 'hidden';
-			document.getElementById("sendTheNumber").style.display = "none";
-			document.getElementById('sendTheNumber').style.visibility = 'hidden';
-		}
-
-		messageElement.classList.add('event-message');
-	}
 	else if (message.gameStatus === 'STARTED') {
 		hideButtons();
 		visibleComponents();
 
 		var messagePlayerName = document.createTextNode(playerName);
 		var textElement = document.createElement('p');
-		var messageElement = document.createElement('li');
+		messageElement = document.createElement('li');
 		textElement.appendChild(messagePlayerName);
 		messageElement.appendChild(textElement);
 		playerNameArea.appendChild(messageElement);
@@ -264,8 +237,8 @@ function onMessageReceived(payload) {
 	}
 
 
-	var messageElement = document.createElement('li');
-	var textElement = document.createElement('p');
+	messageElement = document.createElement('li');
+	textElement = document.createElement('p');
 	var messageText = document.createTextNode(message.content);
 	textElement.appendChild(messageText);
 	messageElement.appendChild(textElement);
@@ -273,6 +246,7 @@ function onMessageReceived(payload) {
 
 
 }
+
 
 function hideComponents() {
 	document.getElementById("sendTheNumber").style.display = "none";
@@ -317,7 +291,9 @@ function disconnect(event) {
 		stompClient.disconnect();
 	}
 	console.log("Disconnected");
+	event.preventDefault();
 }
+usernameForm.addEventListener('submit', connect, true)
 adjustAbleParams.addEventListener("change", setMoveValue, false);
 manualPlayButton.addEventListener('submit', manualPlay, true)
 automaticPlayButton.addEventListener('submit', automaticPlay, true)

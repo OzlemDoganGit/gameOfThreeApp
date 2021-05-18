@@ -20,15 +20,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Player {
-	
-	@Id
-	@GeneratedValue
-	private long id;
-	
-	@Column(nullable = true)
-	String name;
 
-	@Column(nullable = true)
+    @Id
+    @GeneratedValue
+    private long id;
+
+    @Column(nullable = true)
+    String name;
+
+    @Column(nullable = true)
     private PlayerStatus playerStatus;
 
 }

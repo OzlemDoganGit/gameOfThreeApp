@@ -1,1 +1,16 @@
+com\takeaway\gameofthree\controller\GameOfThreeControllerTest.class
+com\takeaway\gameofthree\service\FindPlayerServiceImplTest.class
+com\takeaway\gameofthree\service\GameCommandServiceImplTest.class
+com\takeaway\gameofthree\controller\WebSocketEventListenerTest.class
+com\takeaway\gameofthree\message\GameMessageTest.class
+com\takeaway\gameofthree\service\NumberGeneratorServiceImplTest.class
+com\takeaway\gameofthree\service\GameQueryServiceImplTest.class
+com\takeaway\gameofthree\service\PrepareAutoMessageServiceImplTest.class
+com\takeaway\gameofthree\domain\PlayerTest.class
+com\takeaway\gameofthree\config\SwaggerConfigTest.class
 com\takeaway\gameofthree\GameOfThreeApplicationTests.class
+com\takeaway\gameofthree\domain\PointTest.class
+com\takeaway\gameofthree\domain\GameTest.class
+com\takeaway\gameofthree\service\BuildGameMessageImplTest.class
+com\takeaway\gameofthree\utils\ValidationNumberTest.class
+com\takeaway\gameofthree\GameOfThreeApplicationStartTest.class

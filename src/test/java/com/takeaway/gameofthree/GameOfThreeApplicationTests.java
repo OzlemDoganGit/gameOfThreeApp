@@ -1,13 +1,19 @@
 package com.takeaway.gameofthree;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@SpringBootTest
-class GameOfThreeApplicationTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = GameOfThreeApplication.class)
+public class GameOfThreeApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    public void contextLoads() {
+        assertTrue(true);
+    }
 
 }
