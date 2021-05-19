@@ -74,26 +74,3 @@ spring.jpa.properties.hibernate.hbm2ddl.auto=create-drop
 
 **Note: Snapshots of the application were added to the image folder. **
 
-###Snapshots
-####Connect Page
-![Screen 1](./image/connectpage.JPG)
-####Choose Game Type
-![Screen 2](./image/choosegameType.JPG)
-####Auto Game Starting Player Page
-![Screen 3](./image/autogamestartingplayerPage.JPG)
-####Auto Game Second Player Page
-![Screen 4](./image/waitingforaplayerwarning.JPG)
-####Auto Game Second Player Page
-![Screen 5](./image/autogamestartingplayerpage.JPG)
-####Manual Game Starting Player Page
-![Screen 6](./image/manualgamestartingpage.JPG)
-####Manual Game Second Player Page
-![Screen 7](./image/manualgamesecondplayerpage.JPG)
-####Manual Game Error in Adjustment
-![Screen 8](./image/errorinadjustmentmanualgame.JPG)
-####Manual Game Sent Number To The Opponent Player
-![Screen 9](./image/sentnumbertotheopponentplayer.JPG)
-####Manual Game is ongoing
-![Screen 10](./image/manualongoinggame.JPG)
-####Manual Game is finalized
-![Screen 11](./image/finalizedmanualgame.JPG)
