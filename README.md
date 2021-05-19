@@ -76,24 +76,24 @@ spring.jpa.properties.hibernate.hbm2ddl.auto=create-drop
 
 ###Snapshots
 ####Connect Page
-![Screen 1](image/connectpage.jpg)
+![Screen 1](image/connectpage.JPG)
 ####Choose Game Type
-![Screen 2](image/choosegameType.jpg)
+![Screen 2](image/choosegameType.JPG)
 ####Auto Game Starting Player Page
-![Screen 3](image/autogamestartingplayerPage.jpg)
+![Screen 3](image/autogamestartingplayerPage.JPG)
 ####Auto Game Second Player Page
-![Screen 4](image/waitingforaplayerwarning.jpg)
+![Screen 4](image/waitingforaplayerwarning.JPG)
 ####Auto Game Second Player Page
-![Screen 5](image/autogamestartingplayerpage.jpg)
+![Screen 5](image/autogamestartingplayerpage.JPG)
 ####Manual Game Starting Player Page
-![Screen 6](image/manualgamestartingpage.jpg)
+![Screen 6](image/manualgamestartingpage.JPG)
 ####Manual Game Second Player Page
-![Screen 7](image/manualgamesecondplayerpage.jpg)
+![Screen 7](image/manualgamesecondplayerpage.JPG)
 ####Manual Game Error in Adjustment
-![Screen 8](image/errorinadjustmentmanualgame.jpg)
+![Screen 8](image/errorinadjustmentmanualgame.JPG)
 ####Manual Game Sent Number To The Opponent Player
-![Screen 9](image/sentnumbertotheopponentplayer.jpg)
+![Screen 9](image/sentnumbertotheopponentplayer.JPG)
 ####Manual Game is ongoing
-![Screen 10](image/manualongoinggame.jpg)
+![Screen 10](image/manualongoinggame.JPG)
 ####Manual Game is finalized
-![Screen 11](image/finalizedmanualgame.jpg)
+![Screen 11](image/finalizedmanualgame.JPG)
